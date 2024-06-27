@@ -35,7 +35,7 @@ jobs:
         ssh $env:WIN_SERVER_USER@$env:WIN_SERVER_HOST `
           -p $env:WIN_SERVER_PORT `
           -i $env:WIN_SERVER_SSH_PRIVATE_KEY `
-          "cd C:\inetpub\wwwroot\NetCore7`
+          "cd C:\inetpub\wwwroot\NetCore7; `
           git pull origin main; `
           dotnet build --configuration Release; `
           dotnet publish --configuration Release --output ./publish"
