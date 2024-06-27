@@ -27,8 +27,13 @@ jobs:
     - name: Publish
       run: dotnet publish --configuration Release --output ./publish --no-build
 
+    - name: Setup SSH agent
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.VM_KEY }}
+
     - name: Deploy to VMware using Run Command
       run: |
-        ssh ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} "cd C:\inetpub\wwwroot\NetCore7 && git pull origin main && dotnet build --configuration Release && dotnet publish --configuration Release --output C:\inetpub\wwwroot\NetCore7"
+        ssh ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} "cd C:\\inetpub\\wwwroot\\NetCore7 && git pull origin main && dotnet build --configuration Release && dotnet publish --configuration Release --output C:\\inetpub\\wwwroot\\NetCore7"
       shell: bash
 
