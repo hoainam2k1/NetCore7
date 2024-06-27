@@ -28,13 +28,8 @@ jobs:
       run: dotnet publish --configuration Release --output ./publish --no-build
 
     - name: Deploy to VM
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.VM_HOST }}
-        username: ${{ secrets.VM_USER }}
-        key: ${{ secrets.VM_KEY }}
-        script: |
-          cd C:\inetpub\wwwroot\NetCore7
-          Remove-Item * -Recurse -Force
-          xcopy /s /y /i ./publish/* C:\inetpub\wwwroot\NetCore7
-          Restart-Service -Name w3svc
+      run: |
+        cd C:\inetpub\wwwroot\NetCore7
+        del /S /Q *
+        xcopy /S /Y /I ./publish/* C:\inetpub\wwwroot\NetCore7
+        Restart-Service -Name w3svc
