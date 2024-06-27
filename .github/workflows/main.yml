@@ -34,7 +34,7 @@ jobs:
 
     - name: Check network connectivity
       run: |
-        ping -c 4 ${{ secrets.VM_HOST }}
+        ping -n 4 ${{ secrets.VM_HOST }}
 
     - name: Test SSH Connection
       run: |
