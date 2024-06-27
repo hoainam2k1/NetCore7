@@ -27,7 +27,7 @@ jobs:
     - name: Publish
       run: dotnet publish --configuration Release --output ./publish --no-build
     - name: Ping server
-      run: ping -n 4 ${{ secrets.VM_HOST }}
+      run: ping -n 4 192.168.1.6
 
     - name: Test SSH port
       run: Test-NetConnection -ComputerName ${{ secrets.VM_HOST }} -Port 22
