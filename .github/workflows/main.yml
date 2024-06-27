@@ -32,8 +32,16 @@ jobs:
       with:
         ssh-private-key: ${{ secrets.VM_KEY }}
 
-    - name: Deploy to VMware using Run Command
+    - name: Check network connectivity
       run: |
-        ssh ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} "cd C:\\inetpub\\wwwroot\\NetCore7 && git pull origin main && dotnet build --configuration Release && dotnet publish --configuration Release --output C:\\inetpub\\wwwroot\\NetCore7"
+        ping -c 4 ${{ secrets.VM_HOST }}
+
+    - name: Test SSH Connection
+      run: |
+        ssh -v ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} "echo 'SSH connection successful'"
       shell: bash
 
+    - name: Deploy to VMware using Run Command
+      run: |
+        ssh -v ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} "cd C:\\inetpub\\wwwroot\\NetCore7 && git pull origin main && dotnet build --configuration Release && dotnet publish --configuration Release --output C:\\inetpub\\wwwroot\\NetCore7"
+      shell: bash
