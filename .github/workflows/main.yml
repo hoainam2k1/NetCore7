@@ -31,9 +31,9 @@ jobs:
       env:
         WIN_SERVER_HOST: ${{ secrets.VM_HOST }}
         WIN_SERVER_USER: ${{ secrets.VM_USER }}
-        WIN_SERVER_SSH_PRIVATE_KEY: ${{ secrets.VM_KEY }}
+        WIN_SERVER_SSH_PRIVATE_KEY: ${{ secrets.VM_KEY }}  
         WIN_SERVER_PORT: 22
-        DOTNET_ROOT: 'C:\Program Files\dotnet'  
+        DOTNET_ROOT: 'C:\Program Files\dotnet'
 
       shell: pwsh  
 
@@ -41,9 +41,13 @@ jobs:
         $ErrorActionPreference = 'Stop'
         $env:DOTNET_ROOT = 'C:\Program Files\dotnet'
 
-        ssh $env:WIN_SERVER_USER@$env:WIN_SERVER_HOST `
+      
+        $keyContent = $env:WIN_SERVER_SSH_PRIVATE_KEY
+        $keyPath = "$env:USERPROFILE\id_rsa"  
+        $keyContent | Out-File -FilePath $keyPath -Encoding UTF8
+
+        ssh -i "$keyPath" $env:WIN_SERVER_USER@$env:WIN_SERVER_HOST `
           -p $env:WIN_SERVER_PORT `
-          -i $env:WIN_SERVER_SSH_PRIVATE_KEY `
           "cd C:\inetpub\wwwroot\NetCore7; `
           git pull origin main; `
           dotnet build --configuration Release; `
