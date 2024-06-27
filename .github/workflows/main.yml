@@ -26,19 +26,25 @@ jobs:
 
     - name: Publish
       run: dotnet publish --configuration Release --output ./publish --no-build
-
+      
     - name: Deploy to Windows Server
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.VM_HOST }}
-        username: ${{ secrets.VM_USER }}
-        key: ${{ secrets.VM_KEY }}
-        port: 22  # Cổng mặc định của SSH
-        script: |
-          cd C:\inetpub\wwwroot\NetCore7  
-          git pull origin main  
-          dotnet build --configuration Release  
-          dotnet publish --configuration Release --output ./publish  
+      run: |
+        $ErrorActionPreference = 'Stop'
+        $env:DOTNET_ROOT = 'C:\Program Files\dotnet'
 
-      env:
-        DOTNET_ROOT: C:\Program Files\dotnet
+        ssh $env:WIN_SERVER_USER@$env:WIN_SERVER_HOST `
+          -p $env:WIN_SERVER_PORT `
+          -i $env:WIN_SERVER_SSH_PRIVATE_KEY `
+          "cd C:\inetpub\wwwroot\NetCore7`
+          git pull origin main; `
+          dotnet build --configuration Release; `
+          dotnet publish --configuration Release --output ./publish"
+    
+          env:
+            WIN_SERVER_HOST: ${{ secrets.VM_HOST }}
+            WIN_SERVER_USER: ${{ secrets.VM_USER }}
+            WIN_SERVER_SSH_PRIVATE_KEY: ${{ secrets.VM_KEY }}
+            WIN_SERVER_PORT: 22  
+            DOTNET_ROOT: C:\Program Files\dotnet
+          shell: pwsh
+    
